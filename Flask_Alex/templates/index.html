@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Tarefas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('index') }}">Lista de Tarefas</a>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('adicionar_tarefa') }}">Adicionar Tarefa</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Sair</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for categoria, mensagem in messages %}
+                    <div class="alert alert-{{ categoria }} alert-dismissible fade show" role="alert">
+                        {{ mensagem }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row">
+            <div class="col">
+                <h2>Minhas Tarefas</h2>
+                <ul class="list-group">
+                    {% for tarefa in tarefas %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ tarefa.titulo }}</strong>
+                                <br>
+                                <small>Data: {{ tarefa.data_vencimento }}</small>
+                                <br>
+                                {% if tarefa.concluida %}
+                                    <span class="badge bg-success">Concluída</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">Pendente</span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <a href="{{ url_for('editar_tarefa', tarefa_id=tarefa.id) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+                                <form action="{{ url_for('excluir_tarefa', tarefa_id=tarefa.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                                </form>
+                            </div>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item">Nenhuma tarefa encontrada.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
